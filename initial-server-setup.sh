@@ -2,9 +2,16 @@
 
 # set up script for Ubuntu 24.04 - which uses postgres 16
 
+# check ubuntu version
+UBUNTU_VERSION=$(cat /etc/lsb-release | grep "DISTRIB_RELEASE")
+if [ "$UBUNTU_VERSION" != "DISTRIB_RELEASE=24.04" ]; then
+  printf "Error: This installer only works for Ubuntu 24.04, this is $UBUNTU_VERSION\n"
+  exit 1
+fi
+
 # check is root
 if [ "$EUID" -ne 0 ]; then
-  echo "run: sudo $0"
+  printf "run: sudo $0\n"
   exit 1
 fi
 
