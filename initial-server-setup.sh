@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# set up script for Ubuntu 24.04 - which uses postgres 16
+
 if [ $# -ne 2 ]; then
   printf "$0 takes two parameters: <domain-name> <db-password>\n"
   exit 1
@@ -51,7 +53,7 @@ fi
 # set up postgres using the postgres user
 
 # check we have version 14 of postgres and can find the config files we need to change
-if [ ! -f "/etc/postgresql/14/main/pg_hba.conf" ]; then
+if [ ! -f "/etc/postgresql/16/main/pg_hba.conf" ]; then
   printf "wrong postgres version, please adjust script first\n"
   exit 1
 fi
@@ -91,11 +93,11 @@ fi
 
 # set localhost ipv4 and ipv6 to accept md5 password auth
 # and add docker bridge to allowed network access using md5
-sed -i 's|127.0.0.1.*scram-sha-256|127.0.0.1/32   md5\nhost  all  all  172.17.0.0/16  md5\n|g' /etc/postgresql/14/main/pg_hba.conf
-sed -i 's|::1/128.*scram-sha-256|::1/128   md5|g' /etc/postgresql/14/main/pg_hba.conf
+sed -i 's|127.0.0.1.*scram-sha-256|127.0.0.1/32   md5\nhost  all  all  172.17.0.0/16  md5\n|g' /etc/postgresql/16/main/pg_hba.conf
+sed -i 's|::1/128.*scram-sha-256|::1/128   md5|g' /etc/postgresql/16/main/pg_hba.conf
 
 # set the listen address to allow anyone
-sed -i "s/#listen_addresses.*/listen_addresses = '*'/g" /etc/postgresql/14/main/postgresql.conf
+sed -i "s/#listen_addresses.*/listen_addresses = '*'/g" /etc/postgresql/16/main/postgresql.conf
 
 # restart the postgres server
 systemctl restart postgresql
