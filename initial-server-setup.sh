@@ -41,7 +41,7 @@ apt install nano docker.io postgresql postgresql-contrib build-essential git net
 # log out and back in after this command!
 usermod -aG docker simsage
 
-pip3 install pandas psycopg2-binary psycopg2 pyarrow fastparquet
+pip3 install pandas psycopg2-binary psycopg2 pyarrow fastparquet --break-system-packages
 if [ $? -ne 0 ]; then
   printf "pip3 install failed\n"
   exit 1
