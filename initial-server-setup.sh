@@ -82,6 +82,7 @@ fi
 sudo -u postgres psql -c "alter user simsage with encrypted password '"$db_password"';"
 sudo -u postgres psql -c "grant all privileges on database parquet_store to simsage;"
 sudo -u postgres psql -c "grant all privileges on database superset_metadata to simsage;"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO simsage;"
 
 # set up postgres to enable comms with the local docker instance
 
