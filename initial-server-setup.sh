@@ -2,6 +2,12 @@
 
 # set up script for Ubuntu 24.04 - which uses postgres 16
 
+# check is root
+if [ "$EUID" -ne 0 ]; then
+  echo "run: sudo $0"
+  exit 1
+fi
+
 if [ $# -ne 2 ]; then
   printf "$0 takes two parameters: <domain-name> <db-password>\n"
   exit 1
@@ -11,10 +17,8 @@ fi
 domain_name="$1"
 db_password="$2"
 local_ip=$(hostname -i)
-
-# check is root
-if [ "$EUID" -ne 0 ]; then
-  echo "run: sudo $0"
+if [ "$local_ip" == "127.0.1.1" ] || [ "$local_ip" == "127.0.0.1" ]; then
+  printf "invalid local_ip=$local_ip\n, please set manually\n"
   exit 1
 fi
 
@@ -205,7 +209,9 @@ rm -f dashboard_export_20250624T144642.zip
 
 #################################################################################################
 # remind the user to set up their admin user for accessing superset
-printf "\nEnsure to put the cert-bundle and keys into the appropriate files in /opt/cert/\n"
-printf "\nyou must run\n\ndocker exec -it superset superset fab create-admin\n\nto create your initial simsage user (must be 'simsage')\n"
-printf "\nonce that user exists, you can import the dashboard by running:\n"
-printf "docker exec -it superset superset import-dashboards -p /app/dashboard_export_20250624T144642.zip -u simsage\n\n"
+printf "\nInstructions to complete this installation\n\n"
+printf "1. sudo nano /opt/cert/key.txt\n"
+printf "2. sudo nano /opt/cert/cert-chain.txt\n\n"
+printf "# create your initial simsage user (must be 'simsage')\n"
+printf "3. docker exec -it superset superset fab create-admin\n"
+printf "4. docker exec -it superset superset import-dashboards -p /app/dashboard_export_20250624T144642.zip -u simsage\n\n"
