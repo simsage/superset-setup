@@ -38,7 +38,7 @@ chmod a+x /etc/update-motd.d/98*
 chmod a+x /etc/update-motd.d/90*
 
 # 
-apt install nano docker.io postgresql postgresql-contrib build-essential git net-tools nginx python3-pip libpq-dev python3-dev libsystemd-dev 7zip -yyq
+apt install nano docker.io postgresql postgresql-contrib build-essential git net-tools nginx python3-pip libpq-dev python3-dev libsystemd-dev p7zip-full -yyq
 
 # log out and back in after this command!
 usermod -aG docker simsage
@@ -132,7 +132,7 @@ cp ./valkey/valkey.conf /etc/valkey/
 cp ./valkey/valkey.service /etc/systemd/system/
 
 # set local ip address for listening
-sed -i "s/<localip>/$local_ip/g" /etc/valkey/valkey.conf
+# sed -i "s/<localip>/$local_ip/g" /etc/valkey/valkey.conf
 
 systemctl daemon-reload
 systemctl start valkey.service
@@ -192,9 +192,9 @@ cd ..
 # import our existing dashboard
 
 # unzip the existing dashboard, we need to set the password for the db
-7zz x dashboard_export_20250624.zip
-sed -i "s#sqlalchemy_uri:.*#sqlalchemy_uri: postgresql+psycopg2://simsage:$db_password@$local_ip:5432/parquet_store#g" dashboard_export_20250624T144642/databases/PostgreSQL.yaml
-7zz a -tzip dashboard_export_20250624T144642.zip dashboard_export_20250624T144642
+7z x dashboard_export_20250624.zip
+sed -i "s#sqlalchemy_uri:.*#sqlalchemy_uri: postgresql://simsage:$db_password@$local_ip:5432/parquet_store#g" dashboard_export_20250624T144642/databases/PostgreSQL.yaml
+7z a -tzip dashboard_export_20250624T144642.zip dashboard_export_20250624T144642
 
 # copy this file into the superset container
 docker cp dashboard_export_20250624T144642.zip superset:/app/
