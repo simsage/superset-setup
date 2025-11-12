@@ -174,6 +174,8 @@ sleep 10
 docker exec -it superset superset db upgrade
 # initialize superset
 docker exec -it superset superset init
+# create simsage user
+docker exec -it superset superset fab create-user --role Admin --username simsage --firstname Simsage --lastname Info --email info@simsage.ai --password $db_password
 
 #################################################################################################
 # set up nginx
@@ -214,11 +216,11 @@ docker cp dashboard_export_20250624T144642.zip superset:/app/
 rm -rf dashboard_export_20250624T144642/
 rm -f dashboard_export_20250624T144642.zip
 
+# and import the dashboard
+docker exec -it superset superset import-dashboards -p /app/dashboard_export_20250624T144642.zip -u simsage
+
 #################################################################################################
 # remind the user to set up their admin user for accessing superset
 printf "\nInstructions to complete this installation\n\n"
 printf "1. sudo nano /opt/cert/key.txt\n"
 printf "2. sudo nano /opt/cert/cert-chain.txt\n\n"
-printf "# create your initial simsage user (must be 'simsage')\n"
-printf "3. docker exec -it superset superset fab create-admin\n"
-printf "4. docker exec -it superset superset import-dashboards -p /app/dashboard_export_20250624T144642.zip -u simsage\n\n"
