@@ -159,11 +159,11 @@ systemctl enable valkey.service
 
 docker run -d \
     --name superset \
-    -p 8088:8088 \
+    --net=host \
     -e SUPERSET_SECRET_KEY="0EYM+/Q2Nx5ZgesJxBZpPW9BQAHgWKD25OJT4eLg2w8bhqowA6fdpyLp" \
-    -e DB_CONNECTION_STRING="postgresql+psycopg2://simsage:$db_password@host.docker.internal:5432/superset_metadata" \
-    -e SUPERSET_CACHE_REDIS_URL="redis://host.docker.internal:6379/0" \
-    -e SUPERSET_RATELIMIT_STORAGE_REDIS_URL="redis://host.docker.internal:6379/1" \
+    -e DB_CONNECTION_STRING="postgresql+psycopg2://simsage:$db_password@$local_ip:5432/superset_metadata" \
+    -e SUPERSET_CACHE_REDIS_URL="redis://$local_ip:6379/0" \
+    -e SUPERSET_RATELIMIT_STORAGE_REDIS_URL="redis://$local_ip:6379/1" \
     simsage/superset:5.0.0
 
 # wait for superset to start properly
@@ -218,6 +218,14 @@ rm -f dashboard_export_20250624T144642.zip
 
 # and import the dashboard
 docker exec -it superset superset import-dashboards -p /app/dashboard_export_20250624T144642.zip -u simsage
+
+# set up the firewall
+ufw disable
+ufw reset
+ufw allow 22/tcp
+ufw allow 443/tcp
+ufw allow from $local_ip
+ufw enable
 
 #################################################################################################
 # remind the user to set up their admin user for accessing superset
